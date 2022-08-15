@@ -31,37 +31,25 @@ const getRates = () => {
 getRates();
 setInterval(getRates, 60000);
 
+const moneyManagerApiConnectorCb = response => {
+    if(response.success) {
+        ProfileWidget.showProfile(response.data);
+        moneyManager.setMessage(true, 'Операция выполнена');
+    } else {
+        moneyManager.setMessage(false, response.error);
+    }
+}
+
 moneyManager.addMoneyCallback = data => {
-    ApiConnector.addMoney(data, response => {
-        if(response.success) {
-            ProfileWidget.showProfile(response.data);
-            moneyManager.setMessage(true, 'Операция выполнена');
-        } else {
-            moneyManager.setMessage(false, response.error);
-        }
-    });
+    ApiConnector.addMoney(data, moneyManagerApiConnectorCb);
 }
 
 moneyManager.conversionMoneyCallback = data => {
-    ApiConnector.convertMoney(data, response => {
-        if(response.success) {
-            ProfileWidget.showProfile(response.data);
-            moneyManager.setMessage(true, 'Операция выполнена');
-        } else {
-            moneyManager.setMessage(false, response.error);
-        }
-    });
+    ApiConnector.convertMoney(data, moneyManagerApiConnectorCb);
 }
 
 moneyManager.sendMoneyCallback = data => {
-    ApiConnector.transferMoney(data, response => {
-        if(response.success) {
-            ProfileWidget.showProfile(response.data);
-            moneyManager.setMessage(true, 'Операция выполнена');
-        } else {
-            moneyManager.setMessage(false, response.error);
-        }
-    });
+    ApiConnector.transferMoney(data, moneyManagerApiConnectorCb);
 }
 
 ApiConnector.getFavorites(response => {
@@ -72,28 +60,21 @@ ApiConnector.getFavorites(response => {
     }
 });
 
+const favoritesWidgetApiConnectorCb = response => {
+    if(response.success) {
+        favoritesWidget.clearTable();
+        favoritesWidget.fillTable(response.data);
+        moneyManager.updateUsersList(response.data);
+        favoritesWidget.setMessage(true, 'Операция выполнена');
+    } else {
+        favoritesWidget.setMessage(false, response.error);
+    }
+}
+
 favoritesWidget.addUserCallback = data => {
-    ApiConnector.addUserToFavorites(data, response => {
-        if(response.success) {
-            favoritesWidget.clearTable();
-            favoritesWidget.fillTable(data);
-            moneyManager.updateUsersList(data);
-            favoritesWidget.setMessage(true, 'Операция выполнена');
-        } else {
-            favoritesWidget.setMessage(false, response.error);
-        }
-    });
+    ApiConnector.addUserToFavorites(data, favoritesWidgetApiConnectorCb);
 }
 
 favoritesWidget.removeUserCallback = data => {
-    ApiConnector.removeUserFromFavorites(data, response => {
-        if(response.success) {
-            favoritesWidget.clearTable();
-            favoritesWidget.fillTable(data);
-            moneyManager.updateUsersList(data);
-            favoritesWidget.setMessage(true, 'Операция выполнена');
-        } else {
-            favoritesWidget.setMessage(false, response.error);
-        }
-    });
+    ApiConnector.removeUserFromFavorites(data, favoritesWidgetApiConnectorCb);
 }
